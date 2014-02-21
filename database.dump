@@ -1,0 +1,440 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: accounts; Type: TABLE; Schema: public; Owner: moxie; Tablespace: 
+--
+
+CREATE TABLE accounts (
+    id bigint NOT NULL,
+    number character varying(255) NOT NULL,
+    auth_token character varying(255) NOT NULL,
+    salt character varying(255) NOT NULL,
+    signaling_key character varying(255),
+    gcm_id text,
+    apn_id text,
+    supports_sms smallint DEFAULT 0
+);
+
+
+ALTER TABLE public.accounts OWNER TO moxie;
+
+--
+-- Name: accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: moxie
+--
+
+CREATE SEQUENCE accounts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.accounts_id_seq OWNER TO moxie;
+
+--
+-- Name: accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moxie
+--
+
+ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
+
+
+--
+-- Name: databasechangelog; Type: TABLE; Schema: public; Owner: moxie; Tablespace: 
+--
+
+CREATE TABLE databasechangelog (
+    id character varying(63) NOT NULL,
+    author character varying(63) NOT NULL,
+    filename character varying(200) NOT NULL,
+    dateexecuted timestamp with time zone NOT NULL,
+    orderexecuted integer NOT NULL,
+    exectype character varying(10) NOT NULL,
+    md5sum character varying(35),
+    description character varying(255),
+    comments character varying(255),
+    tag character varying(255),
+    liquibase character varying(20)
+);
+
+
+ALTER TABLE public.databasechangelog OWNER TO moxie;
+
+--
+-- Name: databasechangeloglock; Type: TABLE; Schema: public; Owner: moxie; Tablespace: 
+--
+
+CREATE TABLE databasechangeloglock (
+    id integer NOT NULL,
+    locked boolean NOT NULL,
+    lockgranted timestamp with time zone,
+    lockedby character varying(255)
+);
+
+
+ALTER TABLE public.databasechangeloglock OWNER TO moxie;
+
+--
+-- Name: keys; Type: TABLE; Schema: public; Owner: moxie; Tablespace: 
+--
+
+CREATE TABLE keys (
+    id bigint NOT NULL,
+    number character varying(255) NOT NULL,
+    key_id bigint NOT NULL,
+    public_key text NOT NULL,
+    identity_key text NOT NULL,
+    last_resort smallint DEFAULT 0
+);
+
+
+ALTER TABLE public.keys OWNER TO moxie;
+
+--
+-- Name: keys_id_seq; Type: SEQUENCE; Schema: public; Owner: moxie
+--
+
+CREATE SEQUENCE keys_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.keys_id_seq OWNER TO moxie;
+
+--
+-- Name: keys_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moxie
+--
+
+ALTER SEQUENCE keys_id_seq OWNED BY keys.id;
+
+
+--
+-- Name: pending_accounts; Type: TABLE; Schema: public; Owner: moxie; Tablespace: 
+--
+
+CREATE TABLE pending_accounts (
+    id bigint NOT NULL,
+    number character varying(255) NOT NULL,
+    verification_code character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.pending_accounts OWNER TO moxie;
+
+--
+-- Name: pending_accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: moxie
+--
+
+CREATE SEQUENCE pending_accounts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.pending_accounts_id_seq OWNER TO moxie;
+
+--
+-- Name: pending_accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moxie
+--
+
+ALTER SEQUENCE pending_accounts_id_seq OWNED BY pending_accounts.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: moxie
+--
+
+ALTER TABLE ONLY accounts ALTER COLUMN id SET DEFAULT nextval('accounts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: moxie
+--
+
+ALTER TABLE ONLY keys ALTER COLUMN id SET DEFAULT nextval('keys_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: moxie
+--
+
+ALTER TABLE ONLY pending_accounts ALTER COLUMN id SET DEFAULT nextval('pending_accounts_id_seq'::regclass);
+
+
+--
+-- Data for Name: accounts; Type: TABLE DATA; Schema: public; Owner: moxie
+--
+
+COPY accounts (id, number, auth_token, salt, signaling_key, gcm_id, apn_id, supports_sms) FROM stdin;
+2	+14152671806	340e91e15fac779525f2383ddda7de8b32e70dc1	922968951	/SUtKHYT0v/kkjfuf6nRt/NPSRB8eIlknEeJeRT/uJZCidfB2/eEWrvH2UpYw7DAl52Xsw==	APA91bFFQOKkpszVnwj1cj4IqOgC-1QImEBuC_qCMHXzf9p5KZRov40w6FVp_6mNV2ilRx-8Zi3Y02UsVgESi4Yn38JZ5YD3c55LC0XYDhLoSAZdze7lBGZJ6jB5o6yuw1Ue8YIWqCjbyVmPhUUb_HM5hWFNsuOkPt685MhXa9xmdJbn-XKpipk	\N	0
+\.
+
+
+--
+-- Name: accounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: moxie
+--
+
+SELECT pg_catalog.setval('accounts_id_seq', 2, true);
+
+
+--
+-- Data for Name: databasechangelog; Type: TABLE DATA; Schema: public; Owner: moxie
+--
+
+COPY databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase) FROM stdin;
+1	moxie	migrations.xml	2014-01-16 19:54:46.67487-08	1	EXECUTED	3:dafea0885552a02fed0012e1dc952d88	Create Table (x3), Create Index		\N	2.0.5
+\.
+
+
+--
+-- Data for Name: databasechangeloglock; Type: TABLE DATA; Schema: public; Owner: moxie
+--
+
+COPY databasechangeloglock (id, locked, lockgranted, lockedby) FROM stdin;
+1	f	\N	\N
+\.
+
+
+--
+-- Data for Name: keys; Type: TABLE DATA; Schema: public; Owner: moxie
+--
+
+COPY keys (id, number, key_id, public_key, identity_key, last_resort) FROM stdin;
+1	+14152671806	10331442	Ba6AqeNNmfdCFEWD66onG/P+Zuz75z9jrmkH9YFs1J0m	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+2	+14152671806	10331443	BX/XdzQf+gzBngIrymmUx0SlZ7dJCZOIyt6XNT2ib6dj	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+3	+14152671806	10331444	Bd7uMiqlrIEnWmAyVmqwmhuqejXq76pzVS6bKtFPtx9k	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+4	+14152671806	10331445	BebVHTXrJ+zp5YKovywAtUQm/584j4TnL8K3R6P52dFV	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+5	+14152671806	10331446	BSliSBR3XOsk8PsBgIIPBj6OTMUWw7ycYaNQKH+SLPkJ	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+6	+14152671806	10331447	BV7Gj3iQUfn8S4I2a0xJGIJ/n2hgSNcKqCyDoBMAj80z	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+7	+14152671806	10331448	BTZAaWzyUBjRGjAXRFDYVI/NKhgCW8mXb6bYQA/bRe4N	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+8	+14152671806	10331449	BfRaoezrG5AE445lD5OQGffkeMair4Kfx8KmsTGck2Yg	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+9	+14152671806	10331450	BcQjFhs38XwPOEzIIJE5j9VA1eU24+gWyOdLQdhZ5HFo	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+10	+14152671806	10331451	Bay+Rdx1KxgYC2YkBz4/e0dNebNMcyUQdN/wvjz3PeIw	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+11	+14152671806	10331452	BezFYJsETXwlGvqyUFauZqnOcuwMtF/mbSehPn8y7GNE	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+12	+14152671806	10331453	BcEpMF7fLm/TTDSaQdoE8XG6v+JTkJ38m8xThOZpASoM	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+13	+14152671806	10331454	BaVAqum/4luPyiK2uN8UGMBa+jgaJ12pAb6E1xfyxLlT	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+14	+14152671806	10331455	Bfj0pWQJBdd1+2FQKLtjJZO1JL9SUGFmq9WnJ25LrVAO	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+15	+14152671806	10331456	BfCSL5he0todnG8IBfDmXEvcC/0UXUKu01fyr9dcmJA+	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+16	+14152671806	10331457	BVMjfNu2D6hdpECvFN7MlADGfROsJ5RbI/v7FnsPK9cm	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+17	+14152671806	10331458	Bf50gTawAgEBMr0p093ZVUfUaV5oSyPRN4bdGrDfzJM5	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+18	+14152671806	10331459	BfECk2/+L+laDCYcoBtJbC7CTmoQIFVjeSGseP16miJG	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+19	+14152671806	10331460	BSfyS3JURKzljkZAm2TDHcxQ7z92VzA5Xrp1+coZOBci	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+20	+14152671806	10331461	BcAz6e4/joaa3s/pqs3opqFRewl30cwjDMKC6mIkHvds	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+21	+14152671806	10331462	BS7bqomJeJVziIpozYP45z122PrCoCt6grzhsaOTWgol	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+22	+14152671806	10331463	BYGgskmAtmE24EAk47KUQWBpC86eHP8/8Ga/Fvai48Y2	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+23	+14152671806	10331464	BVgqgDpZFCAQp10EByVxJrfQ3ZprdUk0g0mbMxgpoH8s	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+24	+14152671806	10331465	BdEcVj5BoI+foVEn06fm22af3d9e2tuM8M6NydHtoHYa	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+25	+14152671806	10331466	BTJfyGvHzsu/YineucVb9p9iOxXJSTT9PE6DmmlAHG5Z	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+26	+14152671806	10331467	BSZBRyBI6iQ+QhsfNyGh8oUipWevEDkc2ei7mMyl9H8W	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+27	+14152671806	10331468	BcssczOpwQvUAGYX84LXu1yjAmdaAOvkqfb+fndTF4oz	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+28	+14152671806	10331469	BdTPFKagSPa55NxmPb49jdOCtG1cGXvdcAs0Qw+EsUQn	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+29	+14152671806	10331470	Bdjb16NIKK/3uJzPuzRNFBJ+6Xk4plfFu1ExMvCZUQ4a	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+30	+14152671806	10331471	BdfJs6rA4LuBvZWczs/LXQuGHzawkTfrh6Xsh0YnyFYM	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+31	+14152671806	10331472	Bdbu1pjQOigvaBZa4qLyd/Da6KmNgzjFNsL+Ho0v9GN/	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+32	+14152671806	10331473	BW8SrCtHBTTylU/dVTxazoOhT67LUHDCSObgphfjQFA6	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+33	+14152671806	10331474	BR1Q4LUz8J5XBdphuJChr/9mz0gF9R3VgHn2mJhdXx1t	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+34	+14152671806	10331475	BfzBYuje30j1pX2PADaAp3NRprvwApII6rvXV/1/69lD	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+35	+14152671806	10331476	BWQJBJNBeXwdTaXI9vEjzjxG40CD6VFR88VQHz9M018u	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+36	+14152671806	10331477	BZN2/fcZVFMuAbODDGCqlRUCHX0bscisioMqcahDTl45	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+37	+14152671806	10331478	BbARfnF9bwN885VWOXp4XovSoXfV4o5671ABYWpgS3Zw	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+38	+14152671806	10331479	BVpPUL+Nvj6vlNa5PPHUiMH2uqaTKgVdvOWnSrAnf5lL	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+39	+14152671806	10331480	BQpcHEsYubCezk6z3jk/lYvXvIwQOQ6Pjlb1q70A+4NG	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+40	+14152671806	10331481	BfyJIj6IyfBkNUWpIgyElMUgsUYHoD/pk69s1+GcDZ0P	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+41	+14152671806	10331482	BXX/bXkxZVFoT2YEfYot8JHREfabIrx9jb63nVDt9r4Y	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+42	+14152671806	10331483	BSE8O4rxT9V5ox4jTFqOD694JzYkPa+WR/Q72ZeKkPYD	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+43	+14152671806	10331484	BfxPgUX5bt8nETOr3T6rB5QA35tEkCcfnXe6nW5W6kNT	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+44	+14152671806	10331485	BUOE7KDSAK8dQtKaDKZc96fjlEjRcMA6pBMs5VIZuFEn	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+45	+14152671806	10331486	BXe1Y8QDh+l3FNrLXPSW3kMcoFXYXIU/HtPlUcAM4Wl/	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+46	+14152671806	10331487	Ba/DYQKC1oArv5R8zVjvBa8OSZHZ2VdHg6tiROYQwx8I	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+47	+14152671806	10331488	BUHdHwVwPC0UX9C7t8V4DlDnZjN1O4XnXvTevhNnqu84	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+48	+14152671806	10331489	BVZVWLF08iGEzm1wY9WsMKXr5eoPVjSP57y0DfLAyRci	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+49	+14152671806	10331490	BQCoOZPDihLUYdhp0WRcCPjo7jOhg+0Vrc7AeeGK3zwl	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+50	+14152671806	10331491	BX7ke7dfD9wyQ8DS/dbFOem3P/4/K2zumafKyvIdODZ8	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+51	+14152671806	10331492	BXSrc/rBtWPKhjgKvvKj4egHKBc4RohUFLb6feAprZsD	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+52	+14152671806	10331493	BQeAafrGD0o3WUvFHp1q4cfiSHaJpq9bhRs/x9FBaRYO	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+53	+14152671806	10331494	BUtFih8bBbD8zBuyyn521v9EjD6XWzoTEmzK1trQpSAb	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+54	+14152671806	10331495	BQfm8DsgLUUiY3WLL8fxfFDGUKVbc+OKhAhxlkXx67hr	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+55	+14152671806	10331496	BXsLYeAMv5Y2laPzOgi7enl2T+sRJqHvs8PwGhFVw190	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+56	+14152671806	10331497	Balyt3sbm35A+O+99JUO+rVIWfphkKrCFPTrzwRmwUcm	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+57	+14152671806	10331498	BRCVJtThCbbyrUKH/yX+hwHw1iZ36P9os/HZeFCu+Rlq	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+58	+14152671806	10331499	BZQ4wAPw349wjWs1RDX5eG7HqrjznuEkQPbSvWSZBhUO	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+59	+14152671806	10331500	BWwK8wL5oQLm6Mjr0ROR269Zn6W/85TRek+El16oNnAO	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+60	+14152671806	10331501	BVVLKmSgicoFIpgxsc0H+SOcxqZqrZvsG0xMrCp+gpJn	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+61	+14152671806	10331502	BWF01icKlshiU0nPLT/aPeHmivZZOrx0XA+JA6eXSh5B	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+62	+14152671806	10331503	BYBUvubDFGxB5A9O7JurMTRYcqhm1myOFkMbaoFALjMZ	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+63	+14152671806	10331504	BbaUN7NTf1nyw1bpktob9mxkfnbRRPP5jUNJ321rFLMU	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+64	+14152671806	10331505	BTRkqMNCbpDbJhpofSRD0+4WZeyDiASdByeQy2DTJptz	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+65	+14152671806	10331506	BRtJJ5CrZtFQEpenjmoHxb3X0dHrzPuHqBx0F3oDTsNz	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+66	+14152671806	10331507	BfdQNaCB1BvEq4oOPWf95CBS1Il2vDl5rAQNGNVPG+B6	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+67	+14152671806	10331508	BZ+o+g3KDp5tYXtM9HB1vBET+eQGhEIb2MDFeSdYe1F6	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+68	+14152671806	10331509	BQVdN1mM41KTVlZsFnajBjnhoqHwbNgkrgdYji/wCAMb	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+69	+14152671806	10331510	BWTSrJVHs2zh3bCKkxSW43bNZBDLsL5xoOtu+H9ehRUK	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+70	+14152671806	10331511	BbLVUc9fOZV+tZdqifnio2BrPQ+LpAYpiqiQx9Q4O3FL	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+71	+14152671806	10331512	BXesj9t3H+HJ8AV/K4BPlfxjAPbKHyCZ+yXcB1exVTYb	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+72	+14152671806	10331513	BULnRPNveSj1BsWw6a1rfemU6xHK+sYB564eTNAJgAZk	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+73	+14152671806	10331514	BaQPVvT0pnDJ1bnB2Q8dvUFR8DO861V2bS/LbO1p7HwX	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+74	+14152671806	10331515	BXn+C2hjGAWEYr/ff/XZvkGXUfgrDvcq7skO89rUYf0C	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+75	+14152671806	10331516	BQ/dcCCZoCTB2xo6tmrGWqG4VE+By+p7LC5ixikyxCBl	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+76	+14152671806	10331517	BQ3SYVlAmMIHfweWUK84QxeXoELxdh+KXP4I2zrFCOYW	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+77	+14152671806	10331518	BXWqQTZAlChgQ+B147d3902DEiqfPJ5obaRcZKKbtgta	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+78	+14152671806	10331519	BQUrUQLEIgsraFwqlPg39kN128w5yKXG88LDTQC5F9Ie	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+79	+14152671806	10331520	BXyoWdVDQMwM4BcrUmWEadEZknXNZ7gD5p937S5/AbpK	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+80	+14152671806	10331521	BSpXJsA4cDA6l20eL2xwWthz/nSrow8gRjrgRcL3dn5O	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+81	+14152671806	10331522	BcT87ImH3iL98KBwx2Uje6d6hTYYTZ39m4982wY77Kw+	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+82	+14152671806	10331523	BRpEHQsRj7QTlpkx80WTOQpMLJgohbDugwi+qj/YgdUD	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+83	+14152671806	10331524	BQvY8OGcWNDLp6JzxPCVpKBgCkfzvgWCIIHiddkQq0I/	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+84	+14152671806	10331525	Bbmp50XxEKrF3cjtv8AxnihH/itNsC1ADHY1xlzHSXQ8	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+85	+14152671806	10331526	BVkWCiiNSQFiuy2aeN3/Fvo0deyDEeQs7rOhxLX6rdsa	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+86	+14152671806	10331527	BWelh9efMOf4ws1z1CJBfeKZCLrm2cJicwCtIoOclU01	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+87	+14152671806	10331528	BfZRvnLhMvDXSEPvYl8NE0MDpJvbQBIZyAw/lVT7l2Bd	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+88	+14152671806	10331529	BfFPGEtb+F+YrSM90JqFM0ES1lESP/K8ItwnbNVTnWAz	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+89	+14152671806	10331530	BSYlAu7ppk/VAeNpQDQU+sjuGO4E8FepIzOuI2Hvnh4r	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+90	+14152671806	10331531	BVuLG34JdrQVMmLYySIbga4/FGm93Mlm7QP0q6ebk8xW	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+91	+14152671806	10331532	BRjZkObQnqXjM7XWjDTi+ZkML8se7vh92G3SxFDTWyBx	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+92	+14152671806	10331533	BU6p1HgilITVILBcUWmoUf3tLPBEPRAB/Qh9jwL3XN8J	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+93	+14152671806	10331534	Ba3akkM57tkJVNRBXkiyu8zBmQqCVCwcoNMaFf9zlVgJ	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+94	+14152671806	10331535	Bb8iNsLvGq3HjRlKwIsGqw4C+nsLaURUodRiu7KRubQU	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+95	+14152671806	10331536	BZPjJhQqMamT09gwtga4+NBMJA00kGhhgGjmdHw4DzFz	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+96	+14152671806	10331537	BU5D/k0feM9gOiRXPJc/VIJiIpG9glOi4OGFv+TSx9Yy	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+97	+14152671806	10331538	BV+9UN9OaCt2DKhtAeKuWpzF2kE6JpSYMdP1r3P/T/JO	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+98	+14152671806	10331539	BVQOx0lyCgNZI3sTGLg5TqPmCtSx6sdTLaavES/5JxYl	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+99	+14152671806	10331540	BcOxKe6CYHIyAibQpUnPCCj3YN5pmrne8Xs5VqgpNTBC	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+100	+14152671806	10331541	BUgneewtyHtw+BEK5InIZ+pb5CfYGGpeUAtAxh6RuNQw	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+101	+14152671806	16777215	BZQmzeDXDeRHafxu6wCwDUht62cZN5ynHWhehNb04U5L	BZCDLUIGCKqn7x7fAWeRMFuCy7Taxik/PNxGiO72xKxQ	0
+\.
+
+
+--
+-- Name: keys_id_seq; Type: SEQUENCE SET; Schema: public; Owner: moxie
+--
+
+SELECT pg_catalog.setval('keys_id_seq', 101, true);
+
+
+--
+-- Data for Name: pending_accounts; Type: TABLE DATA; Schema: public; Owner: moxie
+--
+
+COPY pending_accounts (id, number, verification_code) FROM stdin;
+1	+14152671806	282265
+\.
+
+
+--
+-- Name: pending_accounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: moxie
+--
+
+SELECT pg_catalog.setval('pending_accounts_id_seq', 1, true);
+
+
+--
+-- Name: accounts_number_key; Type: CONSTRAINT; Schema: public; Owner: moxie; Tablespace: 
+--
+
+ALTER TABLE ONLY accounts
+    ADD CONSTRAINT accounts_number_key UNIQUE (number);
+
+
+--
+-- Name: pending_accounts_number_key; Type: CONSTRAINT; Schema: public; Owner: moxie; Tablespace: 
+--
+
+ALTER TABLE ONLY pending_accounts
+    ADD CONSTRAINT pending_accounts_number_key UNIQUE (number);
+
+
+--
+-- Name: pk_accounts; Type: CONSTRAINT; Schema: public; Owner: moxie; Tablespace: 
+--
+
+ALTER TABLE ONLY accounts
+    ADD CONSTRAINT pk_accounts PRIMARY KEY (id);
+
+
+--
+-- Name: pk_databasechangelog; Type: CONSTRAINT; Schema: public; Owner: moxie; Tablespace: 
+--
+
+ALTER TABLE ONLY databasechangelog
+    ADD CONSTRAINT pk_databasechangelog PRIMARY KEY (id, author, filename);
+
+
+--
+-- Name: pk_databasechangeloglock; Type: CONSTRAINT; Schema: public; Owner: moxie; Tablespace: 
+--
+
+ALTER TABLE ONLY databasechangeloglock
+    ADD CONSTRAINT pk_databasechangeloglock PRIMARY KEY (id);
+
+
+--
+-- Name: pk_keys; Type: CONSTRAINT; Schema: public; Owner: moxie; Tablespace: 
+--
+
+ALTER TABLE ONLY keys
+    ADD CONSTRAINT pk_keys PRIMARY KEY (id);
+
+
+--
+-- Name: pk_pending_accounts; Type: CONSTRAINT; Schema: public; Owner: moxie; Tablespace: 
+--
+
+ALTER TABLE ONLY pending_accounts
+    ADD CONSTRAINT pk_pending_accounts PRIMARY KEY (id);
+
+
+--
+-- Name: keys_number_index; Type: INDEX; Schema: public; Owner: moxie; Tablespace: 
+--
+
+CREATE INDEX keys_number_index ON keys USING btree (number);
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
